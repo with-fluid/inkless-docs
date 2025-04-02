@@ -21,21 +21,47 @@ Create an account, login, upload a PDF, and create a template at https://app.spr
 
 ![CleanShot 2025-04-01 at 20.39.48@2x.png](/CleanShot2025-04-01at20.39.48@2x.png)
 
-## Update your docs
+## Using your API key, call the `createFromTemplate` API
 
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
+Call the `createFromTemplate` API and specify your templateId and list of recipients with their email and name. The number of recipients must match the number of recipients in the template you created\!
 
-<CardGroup cols="2">
-  <Card title="Add Content With MDX" icon="file" href="/essentials/markdown">
-    Add content to your docs with MDX syntax.
-  </Card>
-  <Card title="Add Code Blocks" icon="square-code" href="/essentials/code">
-    Add code directly to your docs with syntax highlighting.
-  </Card>
-  <Card title="Add Images" icon="image" href="/essentials/images">
-    Add images to your docs to make them more engaging.
-  </Card>
-  <Card title="Add Custom Components" icon="puzzle-piece" href="/essentials/reusable-snippets">
-    Add templates to your docs to make them more reusable.
-  </Card>
-</CardGroup>
+```typescript
+import axios from 'axios';
+
+async function sendTemplateEmail(): Promise<void> {
+  const url = 'http://api.spryngtime.com/api/createFromTemplate';
+  const apiKey = 'test_api_key';
+
+  const data = {
+    templateId: 'your_template_id',
+    recipients: [
+      {
+        email: 'hello@spryngtime.com',
+        name: 'Test User'
+      }
+    ]
+  };
+
+  try {
+    const response = await axios.post(url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey
+      }
+    });
+
+    console.log('Response status:', response.status);
+    console.log('Response data:', response.data);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('API Error:');
+      console.error('Status:', error.response?.status);
+      console.error('Data:', error.response?.data);
+    } else {
+      console.error('Error during API test:', error);
+    }
+  }
+}
+
+sendTemplateEmail();
+```
