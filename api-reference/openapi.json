@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "http://api.spryngtime.com"
+      "url": "https://api.spryngtime.com"
     }
   ],
   "security": [
