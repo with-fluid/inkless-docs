@@ -21,7 +21,7 @@
   "paths": {
     "/createFromTemplate": {
       "post": {
-        "summary": "Create a message from a template",
+        "summary": "Create a message from a template (PDF with fields already added) that has been pre-created on Spryngtime.",
         "description": "Sends a message using a predefined template to one or more recipients.",
         "requestBody": {
           "required": true,
