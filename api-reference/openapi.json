@@ -60,44 +60,13 @@
           }
         },
         "responses": {
-            "200": {
-              "description": "Successfully created message from template",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "description": "Response data",
-                    "properties": {
-                      "message": {
-                        "type": "string",
-                        "description": "Status message",
-                        "example": "PDF created from template successfully."
-                      },
-                      "pdf_id": {
-                        "type": "string",
-                        "description": "Identifier of the created PDF",
-                        "example": "abc123"
-                      },
-                      "s3_url": {
-                        "type": "string",
-                        "description": "URL to access the PDF stored in S3",
-                        "example": "https://s3.amazonaws.com/mybucket/myfile.pdf"
-                      },
-                      "fields": {
-                        "type": "object",
-                        "description": "Template fields",
-                        "additionalProperties": true
-                      },
-                      "recipients": {
-                        "type": "array",
-                        "description": "List of recipient email addresses",
-                        "items": {
-                          "type": "string",
-                          "format": "email"
-                        }
-                      }
-                    }
-                  }
+          "200": {
+            "description": "Successfully created message from template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Response data test"
                 }
               }
             }
