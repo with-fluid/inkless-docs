@@ -61,16 +61,42 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully created message from template",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "description": "Response data test"
+              "description": "Successfully created message from template",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "description": "Response data",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "Status message"
+                      },
+                      "pdf_id": {
+                        "type": "string",
+                        "description": "Identifier of the created PDF"
+                      },
+                      "s3_url": {
+                        "type": "string",
+                        "description": "URL to access the PDF stored in S3"
+                      },
+                      "fields": {
+                        "type": "object",
+                        "description": "Template fields"
+                      },
+                      "recipients": {
+                        "type": "array",
+                        "description": "List of recipient email addresses",
+                        "items": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      }
+                    }
+                  }
                 }
               }
-            }
-          },
+            },
           "400": {
             "description": "Invalid request or missing parameters",
             "content": {
