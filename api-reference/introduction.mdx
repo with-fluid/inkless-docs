@@ -7,14 +7,14 @@ description: 'API reference for the Spryngtime e-sign tool'
   If you're not looking to build on top of the Spryngtime API, you should use the no-code webapp at https://app.spryngtime.com/
 </Note>
 
+## API overview
+
+At a high level, our APIs allow you send out pre-created templates to recipients and receive webhook events when recipients sign.
+
+Why pre-created templates? This is because setting the fields is easier in our UI. We will eventually build an API to create PDFs/templates by passing in the x,y coordinates but this may be a little harder to get right and would require some guess and checks.
+
+When events happen, such as when recipients sign, you can opt to receive webhooks. This will let you know and allow you to trigger your own notifications, such as an email alert.
+
 ## Authentication
 
 All API endpoints are authenticated using Bearer tokens. Email hello@spryngtime.com to get started with your API key. 
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
