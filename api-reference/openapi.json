@@ -160,12 +160,11 @@
           },
           {
             "required": [
-              "id"
             ],
             "type": "object",
             "properties": {
               "id": {
-                "description": "Identification number of the plant",
+                "description": "ID of the event",
                 "type": "integer",
                 "format": "int64"
               }
