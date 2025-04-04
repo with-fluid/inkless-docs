@@ -72,17 +72,9 @@
                         "type": "string",
                         "description": "Status message"
                       },
-                      "pdf_id": {
+                      "id": {
                         "type": "string",
                         "description": "Identifier of the created PDF"
-                      },
-                      "s3_url": {
-                        "type": "string",
-                        "description": "URL to access the PDF stored in S3"
-                      },
-                      "fields": {
-                        "type": "object",
-                        "description": "Template fields"
                       },
                       "recipients": {
                         "type": "array",
