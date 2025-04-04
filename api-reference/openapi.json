@@ -72,7 +72,7 @@
                         "type": "string",
                         "description": "Status message"
                       },
-                      "id": {
+                      "pdf_id": {
                         "type": "string",
                         "description": "Identifier of the created PDF"
                       },
@@ -114,11 +114,11 @@
     }
   },
   "webhooks": {
-    "/plant/webhook": {
+    "/webhook": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "description": "Information about a new event, such as when a recipient signs a PDF",
         "requestBody": {
-          "description": "Plant added to the store",
+          "description": "Event type and data related to the event",
           "content": {
             "application/json": {
               "schema": {
@@ -143,12 +143,12 @@
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
+          "pdf_id": {
+            "description": "The ID of the PDF",
             "type": "string"
           },
-          "tag": {
-            "description": "Tag to specify the type",
+          "event_type": {
+            "description": "Event type, such as document.signed",
             "type": "string"
           }
         }
