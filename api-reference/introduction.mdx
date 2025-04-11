@@ -11,6 +11,10 @@ description: 'API reference for the Spryngtime e-sign tool'
 
 At a high level, our APIs allow you send out pre-created templates to recipients and receive webhook events when recipients sign.
 
+<Note>
+We recommend selecting "Auto-release signatures when complete" when creating your template. When enabled, this setting automatically sends the final PDF with signatures once everyone has signed. If this is not enabled, you will need to manually review and release signatures even after everyone has signed.
+</Note>
+
 Why pre-created templates? This is because setting the fields is easier in our UI. We will eventually build an API to create PDFs/templates by passing in the x,y coordinates but this may be a little harder to get right and would require some guess and checks.
 
 When events happen, such as when recipients sign, you can opt to receive webhooks. This will let you know and allow you to trigger your own notifications, such as an email alert.

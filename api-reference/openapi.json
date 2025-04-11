@@ -21,7 +21,7 @@
   "paths": {
     "/createFromTemplate": {
       "post": {
-        "summary": "Create a message from a template (PDF with fields already added) that has been pre-created on Spryngtime.",
+        "summary": "Create a message from a template (PDF with fields already added) that has been pre-created on Spryngtime. We recommend selecting 'Auto-release signatures when complete' when creating your template. When enabled, this setting automatically sends the final PDF with signatures once everyone has signed. If this is not enabled, you will need to manually review and release signatures even after everyone has signed.",
         "description": "Sends a message using a predefined template to one or more recipients.",
         "requestBody": {
           "required": true,
