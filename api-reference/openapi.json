@@ -61,34 +61,34 @@
         },
         "responses": {
           "200": {
-              "description": "Successfully created message from template",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "description": "Response data",
-                    "properties": {
-                      "message": {
+            "description": "Successfully created message from template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Response data",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Status message"
+                    },
+                    "pdf_id": {
+                      "type": "string",
+                      "description": "Identifier of the created PDF"
+                    },
+                    "recipients": {
+                      "type": "array",
+                      "description": "List of recipient email addresses",
+                      "items": {
                         "type": "string",
-                        "description": "Status message"
-                      },
-                      "pdf_id": {
-                        "type": "string",
-                        "description": "Identifier of the created PDF"
-                      },
-                      "recipients": {
-                        "type": "array",
-                        "description": "List of recipient email addresses",
-                        "items": {
-                          "type": "string",
-                          "format": "email"
-                        }
+                        "format": "email"
                       }
                     }
                   }
                 }
               }
-            },
+            }
+          },
           "400": {
             "description": "Invalid request or missing parameters",
             "content": {
@@ -101,6 +101,64 @@
           },
           "401": {
             "description": "Unauthorized (API key missing or invalid)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registerWebhook": {
+      "post": {
+        "summary": "Register a webhook to receive notifications for specific events.",
+        "description": "Allows your application to subscribe to events such as 'document.signed' by providing a URL where the webhook notifications should be sent.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterWebhookRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Webhook successfully registered.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterWebhookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or missing required parameters (url, eventType).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (API key missing, invalid, or expired).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -138,9 +196,7 @@
   "components": {
     "schemas": {
       "Plant": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "pdf_id": {
@@ -159,8 +215,7 @@
             "$ref": "#/components/schemas/Plant"
           },
           {
-            "required": [
-            ],
+            "required": [],
             "type": "object",
             "properties": {
               "id": {
@@ -173,18 +228,70 @@
         ]
       },
       "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+        "required": ["message"],
         "type": "object",
         "properties": {
           "error": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "description": "Error code (optional, added for consistency)"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "A human-readable error message"
+          }
+        }
+      },
+      "RegisterWebhookRequest": {
+        "type": "object",
+        "required": ["url", "eventType"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The URL where webhook notifications will be sent."
+          },
+          "eventType": {
+            "type": "string",
+            "description": "The type of event to subscribe to (e.g., 'document.signed')."
+          },
+          "secret": {
+            "type": "string",
+            "description": "An optional secret to sign webhook payloads, allowing the recipient to verify the sender's authenticity.",
+            "nullable": true
+          }
+        }
+      },
+      "RegisterWebhookResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A success message indicating the webhook was registered."
+          },
+          "webhook": {
+            "type": "object",
+            "description": "Details of the newly registered webhook.",
+            "$ref": "#/components/schemas/WebhookRegistration"
+          }
+        }
+      },
+      "WebhookRegistration": {
+        "type": "object",
+        "required": ["webhook_id", "url", "eventType"],
+        "properties": {
+          "webhook_id": {
+            "type": "string",
+            "description": "The unique identifier of the registered webhook."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The URL where webhook notifications will be sent."
+          },
+          "eventType": {
+            "type": "string",
+            "description": "The type of event subscribed to."
           }
         }
       }
