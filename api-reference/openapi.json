@@ -207,6 +207,78 @@
         }
       }
     },
+    "/getDocumentDetails": {
+      "get": {
+        "summary": "Retrieve a single document's details",
+        "description": "Fetches detailed information for a specific document by its ID. The response includes document metadata, recipient information, and a temporary URL to the final signed PDF if the document has been completed.",
+        "security": [
+          { "apiKeyAuth": [] }
+        ],
+        "parameters": [
+          {
+            "name": "pdf_id",
+            "in": "query",
+            "required": true,
+            "description": "The unique identifier of the document to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document details retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDocumentDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Missing or invalid 'pdf_id' query parameter.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API key is missing or invalid.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - You do not have permission to access this document.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - The requested document does not exist.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/deleteWebhook": {
       "post": {
         "summary": "Delete a webhook",
@@ -317,6 +389,23 @@
         },
         "required": ["id", "recipients"]
       },
+      "DocumentDetails": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Unique document identifier" },
+          "name": { "type": "string", "description": "Name or title of the document" },
+          "status": { "type": "string", "description": "Current status of the document (e.g., draft, signed, etc.)" },
+          "finalUrl": { "type": ["string", "null"], "description": "A temporary, presigned URL to the final signed PDF. This URL is only available when the document status is 'signed'." },
+          "recipients": {
+            "type": "array",
+            "description": "List of recipients for this document",
+            "items": {
+              "$ref": "#/components/schemas/DocumentRecipient"
+            }
+          }
+        },
+        "required": ["id", "name", "status", "recipients"]
+      },
       "DocumentRecipient": {
         "type": "object",
         "properties": {
@@ -335,6 +424,16 @@
           }
         },
         "required": ["message", "documents"]
+      },
+       "GetDocumentDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "description": "Status message" },
+          "document": {
+            "$ref": "#/components/schemas/DocumentDetails"
+          }
+        },
+        "required": ["message", "document"]
       },
       "WebhookEventPayload": {
         "type": "object",
