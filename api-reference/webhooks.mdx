@@ -64,9 +64,10 @@ Response
 ```
 
 ## Supported Webhook Events
-Event Name	Description
-document.signed	Triggered when a recipient signs a document.
-document.finalized	Triggered when the final signed PDF is available to owner.
+| Event Name         | Description                                                 |
+| ------------------ | ----------------------------------------------------------- |
+| `document.signed`  | Triggered when a recipient signs a document.                |
+| `document.finalized` | Triggered when the final signed PDF is available to owner. |
 
 ## Webhook Payloads
 When your webhook is triggered, your endpoint will receive a POST request with a JSON payload. The structure depends on the event.
