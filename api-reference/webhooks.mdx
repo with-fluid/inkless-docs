@@ -1,0 +1,133 @@
+---
+title: 'Webhooks'
+description: 'How to use webhooks with the e-sign API'
+---
+
+<Note>
+  If you're not looking to build on top of the API, you can use the no-code webapp at https://app.useinkless.com/
+</Note>
+
+## Overview
+
+Webhooks allow your application to receive real-time notifications when important events occur in your e-sign workflow, such as when a document is signed or a finalized PDF is generated. By registering a webhook, you can automate downstream actions (e.g., send emails, update your CRM, etc.) whenever these events happen.
+
+## Registering a Webhook
+
+To receive webhook notifications, you must first register your webhook endpoint using the `/registerWebhook` API.
+
+### Endpoint
+
+POST /registerWebhook
+
+### Request Headers
+
+- `x-api-key`: **(required)** Your API key for authentication.
+
+### Request Body
+
+```json
+{
+  "user_id": "your-user-id",
+  "url": "[https://yourdomain.com/webhook-endpoint](https://yourdomain.com/webhook-endpoint)",
+  "eventType": "document.signed", // or "document.finalized"
+  "secret": "optional-secret-key"
+}
+```
+user_id: Your user ID (provided when you sign up for API access).
+url: The HTTPS endpoint that will receive webhook events.
+eventType: The event to subscribe to. Supported values:
+document.signed — triggered when a recipient signs a document.
+document.finalized — triggered when the final, signed PDF is available.
+secret (optional): If provided, webhook payloads will be signed so you can verify authenticity.
+
+Example Request
+```
+curl -X POST https://api.useinkless.com/registerWebhook \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user_id": "user-123",
+    "url": "https://yourdomain.com/webhook",
+    "eventType": "document.signed"
+  }'
+```
+Response
+```json
+{
+  "message": "Webhook registered",
+  "webhook": {
+    "webhook_id": "abc123",
+    "url": "https://yourdomain.com/webhook",
+    "eventType": "document.signed"
+  }
+}
+```
+
+## Supported Webhook Events
+Event Name	Description
+document.signed	Triggered when a recipient signs a document.
+document.finalized	Triggered when the final signed PDF is available to owner.
+
+## Webhook Payloads
+When your webhook is triggered, your endpoint will receive a POST request with a JSON payload. The structure depends on the event.
+
+### document.signed Event
+```json
+{
+  "event": "document.signed",
+  "pdf_id": "pdf-123",
+  "recipient": {
+    "name": "Recipient Name",
+    "email": "recipient@example.com",
+    "recipientHash": "hash123"
+  },
+  "completed_fields": [
+    // ... array of completed field objects
+  ],
+  "status": "signed"
+}
+```
+event: The event type.
+pdf_id: The unique identifier for the document.
+recipient: The recipient who signed (name, email, and a unique hash).
+completed_fields: Information about completed fields (see API reference for structure).
+status: The current status of the document.
+
+### document.finalized Event
+```json
+{
+  "event": "document.finalized",
+  "pdf_id": "pdf-123",
+  "final_pdf_url": "https://s3.amazonaws.com/your-bucket/final_document.pdf"
+}
+```
+event: The event type.
+pdf_id: The unique identifier for the document.
+final_pdf_url: A secure, time-limited URL to download the finalized PDF.
+
+## Authenticating Webhook Requests
+If you provided a secret when registering your webhook, each webhook request will include a signature header (x-webhook-signature) that you can use to verify the authenticity of the payload. (See below for verification instructions.)
+
+## Handling Webhooks
+
+Your endpoint should:
+Respond with HTTP 200 OK as soon as possible.
+Validate the payload signature if a secret is used.
+Process the event according to your business logic.
+Example Webhook Handler (Node.js/Express)
+```js
+app.post('/webhook', express.json(), (req, res) => {
+  const event = req.body.event;
+  if (event === 'document.signed') {
+    // Handle document signed
+  } else if (event === 'document.finalized') {
+    // Handle finalized PDF
+  }
+  res.status(200).send('OK');
+});
+```
+
+## Authentication
+All API endpoints are authenticated using Bearer tokens or API keys. Email hello@useinkless.com to get started with your API key.
+
+If you need more details or want to see sample payloads for other events, please reach out to support.
