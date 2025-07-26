@@ -170,6 +170,43 @@
         }
       }
     },
+    "/getAllDocuments": {
+        "get": {
+          "summary": "Retrieve all documents for the authenticated user",
+          "description": "Returns all documents owned by the user associated with the provided API key. Each document includes its metadata, a presigned public URL, and recipient information.",
+          "security": [
+            { "apiKeyAuth": [] }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved all documents for the user.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/GetAllDocumentsResponse"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized (API key missing or invalid)",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Error" }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error.",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Error" }
+                }
+              }
+            }
+          }
+        }
+      },
     "/deleteWebhook": {
       "post": {
         "summary": "Delete a previously registered webhook.",
