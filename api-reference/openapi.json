@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Inkless API docs",
-    "description": "API docs for sending e-sign documents",
+    "title": "OpenAPI Plant Store",
+    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
     "license": {
       "name": "MIT"
     },
@@ -169,6 +169,74 @@
           }
         }
       }
+    },
+    "/deleteWebhook": {
+      "post": {
+        "summary": "Delete a previously registered webhook.",
+        "description": "Removes a webhook registration based on the provided URL for the authenticated user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteWebhookRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook successfully deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteWebhookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or missing required parameter (url).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (API key missing, invalid, or expired).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Webhook not found or already deleted for the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "webhooks": {
@@ -292,6 +360,31 @@
           "eventType": {
             "type": "string",
             "description": "The type of event subscribed to."
+          }
+        }
+      },
+      "DeleteWebhookRequest": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The URL of the webhook to be deleted."
+          }
+        }
+      },
+      "DeleteWebhookResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A success message indicating the webhook was deleted."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The URL of the webhook that was deleted."
           }
         }
       }
