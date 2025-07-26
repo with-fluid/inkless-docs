@@ -88,11 +88,11 @@ When your webhook is triggered, your endpoint will receive a POST request with a
   "status": "signed"
 }
 ```
-event: The event type.
-pdf_id: The unique identifier for the document.
-recipient: The recipient who signed (name, email, and a unique hash).
-completed_fields: Information about completed fields (see API reference for structure).
-status: The current status of the document.
+- event: The event type.
+- pdf_id: The unique identifier for the document.
+- recipient: The recipient who signed (name, email, and a unique hash).
+- completed_fields: Information about completed fields (see API reference for structure).
+- status: The current status of the document.
 
 ### document.finalized Event
 ```json
@@ -102,9 +102,9 @@ status: The current status of the document.
   "final_pdf_url": "https://s3.amazonaws.com/your-bucket/final_document.pdf"
 }
 ``` 
-event: The event type.
-pdf_id: The unique identifier for the document.
-final_pdf_url: A secure, time-limited URL to download the finalized PDF.
+- event: The event type.
+- pdf_id: The unique identifier for the document.
+- final_pdf_url: A secure, time-limited URL to download the finalized PDF.
 
 ## Authenticating Webhook Requests
 If you provided a secret when registering your webhook, each webhook request will include a signature header (x-webhook-signature) that you can use to verify the authenticity of the payload. (See below for verification instructions.)
