@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "title": "Inkless API",
+    "description": "A sample API for the Inkless document signing service. Create documents from templates, manage webhooks, and retrieve document status.",
     "license": {
       "name": "MIT"
     },
@@ -21,8 +21,8 @@
   "paths": {
     "/createFromTemplate": {
       "post": {
-        "summary": "Create a message from a template (PDF with fields already added) that has been pre-created on Inkless. We recommend selecting 'Auto-release signatures when complete' when creating your template. When enabled, this setting automatically sends the final PDF with signatures once everyone has signed. If this is not enabled, you will need to manually review and release signatures even after everyone has signed.",
-        "description": "Sends a message using a predefined template to one or more recipients. We recommend selecting 'Auto-release signatures when complete' when creating your template. When enabled, this setting automatically sends the final PDF with signatures once everyone has signed. If this is not enabled, you will need to manually review and release signatures even after everyone has signed.",
+        "summary": "Create a message from a template",
+        "description": "Sends a message using a predefined template to one or more recipients. We recommend selecting 'Auto-release signatures when complete' when creating your template on Inkless.",
         "requestBody": {
           "required": true,
           "content": {
@@ -114,7 +114,7 @@
     },
     "/registerWebhook": {
       "post": {
-        "summary": "Register a webhook to receive notifications for specific events.",
+        "summary": "Register a webhook",
         "description": "Allows your application to subscribe to events such as 'document.signed' by providing a URL where the webhook notifications should be sent.",
         "requestBody": {
           "required": true,
@@ -171,45 +171,45 @@
       }
     },
     "/getAllDocuments": {
-        "get": {
-          "summary": "Retrieve all documents for the authenticated user",
-          "description": "Returns all documents owned by the user associated with the provided API key. Each document includes its metadata, a presigned public URL, and recipient information.",
-          "security": [
-            { "apiKeyAuth": [] }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successfully retrieved all documents for the user.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/GetAllDocumentsResponse"
-                  }
+      "get": {
+        "summary": "Retrieve all documents",
+        "description": "Returns all documents owned by the user associated with the provided API key. Each document includes its metadata, a presigned public URL, and recipient information.",
+        "security": [
+          { "apiKeyAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all documents for the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDocumentsResponse"
                 }
               }
-            },
-            "401": {
-              "description": "Unauthorized (API key missing or invalid)",
-              "content": {
-                "application/json": {
-                  "schema": { "$ref": "#/components/schemas/Error" }
-                }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (API key missing or invalid)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
-            },
-            "500": {
-              "description": "Internal server error.",
-              "content": {
-                "application/json": {
-                  "schema": { "$ref": "#/components/schemas/Error" }
-                }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
               }
             }
           }
         }
-      },
+      }
+    },
     "/deleteWebhook": {
       "post": {
-        "summary": "Delete a previously registered webhook.",
+        "summary": "Delete a webhook",
         "description": "Removes a webhook registration based on the provided URL for the authenticated user.",
         "requestBody": {
           "required": true,
@@ -277,22 +277,22 @@
     }
   },
   "webhooks": {
-    "/webhook": {
+    "documentEvent": {
       "post": {
-        "description": "Information about a new event, such as when a recipient signs a PDF",
+        "description": "A webhook that delivers information about a document event, such as when a recipient signs a PDF.",
         "requestBody": {
-          "description": "Event type and data related to the event",
+          "description": "Data related to the event that occurred.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/WebhookEvent"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "Return a 200 status to acknowledge receipt of the event."
           }
         }
       }
@@ -301,86 +301,83 @@
   "components": {
     "schemas": {
       "DashboardDocument": {
-          "type": "object",
-          "properties": {
-            "id": { "type": "string", "description": "Unique document identifier" },
-            "name": { "type": "string", "description": "Name or title of the document" },
-            "status": { "type": "string", "description": "Current status of the document (e.g., draft, signed, etc.)" },
-            "publicUrl": { "type": ["string", "null"], "description": "Presigned URL for accessing the document, or null if unavailable" },
-            "recipients": {
-              "type": "array",
-              "description": "List of recipients for this document",
-              "items": {
-                "$ref": "#/components/schemas/DocumentRecipient"
-              }
-            }
-            // Add other fields as needed from your DB record
-          },
-          "required": ["id", "recipients"]
-        },
-        "DocumentRecipient": {
-          "type": "object",
-          "properties": {
-            "name": { "type": "string", "description": "Recipient's name" },
-            "email": { "type": "string", "format": "email", "description": "Recipient's email address" }
-          },
-          "required": ["name", "email"]
-        },
-        "GetAllDocumentsResponse": {
-          "type": "object",
-          "properties": {
-            "message": { "type": "string", "description": "Status message" },
-            "documents": {
-              "type": "array",
-              "items": { "$ref": "#/components/schemas/DashboardDocument" }
-            }
-          },
-          "required": ["message", "documents"]
-        },
-      "Plant": {
-        "required": ["name"],
         "type": "object",
         "properties": {
+          "id": { "type": "string", "description": "Unique document identifier" },
+          "name": { "type": "string", "description": "Name or title of the document" },
+          "status": { "type": "string", "description": "Current status of the document (e.g., draft, signed, etc.)" },
+          "publicUrl": { "type": ["string", "null"], "description": "Presigned URL for accessing the document, or null if unavailable" },
+          "recipients": {
+            "type": "array",
+            "description": "List of recipients for this document",
+            "items": {
+              "$ref": "#/components/schemas/DocumentRecipient"
+            }
+          }
+        },
+        "required": ["id", "recipients"]
+      },
+      "DocumentRecipient": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Recipient's name" },
+          "email": { "type": "string", "format": "email", "description": "Recipient's email address" }
+        },
+        "required": ["name", "email"]
+      },
+      "GetAllDocumentsResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "description": "Status message" },
+          "documents": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DashboardDocument" }
+          }
+        },
+        "required": ["message", "documents"]
+      },
+      "WebhookEventPayload": {
+        "type": "object",
+        "required": [ "pdf_id", "event_type" ],
+        "properties": {
           "pdf_id": {
-            "description": "The ID of the PDF",
+            "description": "The ID of the PDF document related to the event.",
             "type": "string"
           },
           "event_type": {
-            "description": "Event type, such as document.signed",
+            "description": "Type of the event that occurred, such as 'document.signed'.",
             "type": "string"
           }
         }
       },
-      "NewPlant": {
+      "WebhookEvent": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/Plant"
+            "$ref": "#/components/schemas/WebhookEventPayload"
           },
           {
-            "required": [],
             "type": "object",
             "properties": {
               "id": {
-                "description": "ID of the event",
-                "type": "integer",
-                "format": "int64"
+                "description": "Unique ID of this event notification.",
+                "type": "string"
               }
             }
           }
         ]
       },
       "Error": {
-        "required": ["message"],
         "type": "object",
+        "required": ["message"],
         "properties": {
           "error": {
             "type": "integer",
             "format": "int32",
-            "description": "Error code (optional, added for consistency)"
+            "description": "Optional error code."
           },
           "message": {
             "type": "string",
-            "description": "A human-readable error message"
+            "description": "A human-readable error message."
           }
         }
       },
@@ -398,9 +395,8 @@
             "description": "The type of event to subscribe to (e.g., 'document.signed')."
           },
           "secret": {
-            "type": "string",
-            "description": "An optional secret to sign webhook payloads, allowing the recipient to verify the sender's authenticity.",
-            "nullable": true
+            "type": ["string", "null"],
+            "description": "An optional secret to sign webhook payloads, allowing the recipient to verify the sender's authenticity."
           }
         }
       },
@@ -412,8 +408,6 @@
             "description": "A success message indicating the webhook was registered."
           },
           "webhook": {
-            "type": "object",
-            "description": "Details of the newly registered webhook.",
             "$ref": "#/components/schemas/WebhookRegistration"
           }
         }
