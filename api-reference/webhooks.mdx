@@ -33,12 +33,12 @@ POST /registerWebhook
   "secret": "optional-secret-key"
 }
 ```
-user_id: Your user ID (provided when you sign up for API access).
-url: The HTTPS endpoint that will receive webhook events.
-eventType: The event to subscribe to. Supported values:
-document.signed — triggered when a recipient signs a document.
-document.finalized — triggered when the final, signed PDF is available.
-secret (optional): If provided, webhook payloads will be signed so you can verify authenticity.
+- user_id: Your user ID (provided when you sign up for API access).
+- url: The HTTPS endpoint that will receive webhook events.
+- eventType: The event to subscribe to. Supported values:
+  - document.signed — triggered when a recipient signs a document.
+  - document.finalized — triggered when the final, signed PDF is available.
+- secret (optional): If provided, webhook payloads will be signed so you can verify authenticity.
 
 Example Request
 ```
@@ -101,7 +101,7 @@ status: The current status of the document.
   "pdf_id": "pdf-123",
   "final_pdf_url": "https://s3.amazonaws.com/your-bucket/final_document.pdf"
 }
-```
+``` 
 event: The event type.
 pdf_id: The unique identifier for the document.
 final_pdf_url: A secure, time-limited URL to download the finalized PDF.
