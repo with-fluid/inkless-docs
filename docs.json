@@ -31,7 +31,7 @@
             "pages": [
               
               "api-reference/endpoint/create",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/registerWebhook"
               
             ]
           }
