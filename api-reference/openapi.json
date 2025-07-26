@@ -300,6 +300,43 @@
   },
   "components": {
     "schemas": {
+      "DashboardDocument": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string", "description": "Unique document identifier" },
+            "name": { "type": "string", "description": "Name or title of the document" },
+            "status": { "type": "string", "description": "Current status of the document (e.g., draft, signed, etc.)" },
+            "publicUrl": { "type": ["string", "null"], "description": "Presigned URL for accessing the document, or null if unavailable" },
+            "recipients": {
+              "type": "array",
+              "description": "List of recipients for this document",
+              "items": {
+                "$ref": "#/components/schemas/DocumentRecipient"
+              }
+            }
+            // Add other fields as needed from your DB record
+          },
+          "required": ["id", "recipients"]
+        },
+        "DocumentRecipient": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string", "description": "Recipient's name" },
+            "email": { "type": "string", "format": "email", "description": "Recipient's email address" }
+          },
+          "required": ["name", "email"]
+        },
+        "GetAllDocumentsResponse": {
+          "type": "object",
+          "properties": {
+            "message": { "type": "string", "description": "Status message" },
+            "documents": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/DashboardDocument" }
+            }
+          },
+          "required": ["message", "documents"]
+        },
       "Plant": {
         "required": ["name"],
         "type": "object",
