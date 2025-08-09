@@ -203,7 +203,7 @@
       "post": {
         "operationId": "createNewTemplate",
         "summary": "Create a template (API key auth). Optionally instantiate and send to recipients.",
-        "description": "Creates a template from an uploaded PDF and template fields. If `recipients` are provided, a PDF instance is immediately created from the template and recipient notifications are sent. [See the guide for implementing createNewTemplate](/api-reference/createNewTemplate).",
+        "description": "Creates a template from an uploaded PDF or DOCX and template fields. If `recipients` are provided, a PDF instance is immediately created from the template and recipient notifications are sent. [See the guide for implementing createNewTemplate](/api-reference/createNewTemplate).",
         "security": [{ "apiKeyAuth": [] }],
         "requestBody": {
           "required": true,
@@ -216,7 +216,7 @@
                   "pdf": {
                     "type": "string",
                     "format": "binary",
-                    "description": "The template PDF file to upload."
+                    "description": "The template PDF file to upload. Note that you can also upload a DOCX file here but will be converted to a PDF."
                   },
                   "templateName": { "type": "string", "description": "Name for the template." },
                   "fields": {
@@ -239,6 +239,9 @@
                 }
               },
               "encoding": {
+                "pdf": {
+                  "contentType": "application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/msword"
+                },
                 "fields": { "contentType": "application/json" },
                 "recipients": { "contentType": "application/json" }
               }
