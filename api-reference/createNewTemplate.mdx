@@ -28,7 +28,7 @@ Use this API to create a reusable template from a PDF. Optionally include `recip
 - **Optional**
   - `recipients` (JSON string): If provided, the server immediately creates a document instance from the template and notifies these recipients.
     - Array of objects `{ name: string, email: string, phone?: string }`
-  - `autoReleaseSignatures` (boolean): Defaults to `false` if omitted; auto-finalize when all signatures are collected.
+  - `autoReleaseSignatures` (boolean): Defaults to `true` if omitted; auto-finalize when all signatures are collected.
 
 ## Important notes
 - Do NOT manually set the `Content-Type` header for multipart; let your HTTP client set the boundary.
