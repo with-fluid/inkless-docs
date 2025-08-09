@@ -2,25 +2,16 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Inkless API",
-    "description": "A sample API for the Inkless document signing service. Create documents from templates, manage webhooks, and retrieve document status.",
-    "license": {
-      "name": "MIT"
-    },
+    "description": "API for the Inkless document signing service. Create documents from templates, manage webhooks, and retrieve document status.",
+    "license": { "name": "MIT" },
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "https://api.useinkless.com"
-    }
-  ],
-  "security": [
-    {
-      "apiKeyAuth": []
-    }
-  ],
+  "servers": [{ "url": "https://api.useinkless.com" }],
+  "security": [{ "apiKeyAuth": [] }],
   "paths": {
     "/createFromTemplate": {
       "post": {
+        "operationId": "createFromTemplate",
         "summary": "Create a message from a template",
         "description": "Sends a message using a predefined template to one or more recipients. We recommend selecting 'Auto-release signatures when complete' when creating your template on Inkless.",
         "requestBody": {
@@ -31,10 +22,7 @@
                 "type": "object",
                 "required": ["templateId", "recipients"],
                 "properties": {
-                  "templateId": {
-                    "type": "string",
-                    "description": "ID of the template to use"
-                  },
+                  "templateId": { "type": "string", "description": "ID of the template to use" },
                   "recipients": {
                     "type": "array",
                     "description": "List of recipient objects",
@@ -42,15 +30,8 @@
                       "type": "object",
                       "required": ["email", "name"],
                       "properties": {
-                        "email": {
-                          "type": "string",
-                          "format": "email",
-                          "description": "Email address of the recipient"
-                        },
-                        "name": {
-                          "type": "string",
-                          "description": "Name of the recipient"
-                        }
+                        "email": { "type": "string", "format": "email", "description": "Email address of the recipient" },
+                        "name": { "type": "string", "description": "Name of the recipient" }
                       }
                     }
                   }
@@ -68,21 +49,12 @@
                   "type": "object",
                   "description": "Response data",
                   "properties": {
-                    "message": {
-                      "type": "string",
-                      "description": "Status message"
-                    },
-                    "pdf_id": {
-                      "type": "string",
-                      "description": "Identifier of the created PDF"
-                    },
+                    "message": { "type": "string", "description": "Status message" },
+                    "pdf_id": { "type": "string", "description": "Identifier of the created PDF" },
                     "recipients": {
                       "type": "array",
                       "description": "List of recipient email addresses",
-                      "items": {
-                        "type": "string",
-                        "format": "email"
-                      }
+                      "items": { "type": "string", "format": "email" }
                     }
                   }
                 }
@@ -91,351 +63,311 @@
           },
           "400": {
             "description": "Invalid request or missing parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "401": {
             "description": "Unauthorized (API key missing or invalid)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           }
         }
       }
     },
     "/registerWebhook": {
       "post": {
+        "operationId": "registerWebhook",
         "summary": "Register a webhook",
-        "description": "Allows your application to subscribe to events such as 'document.signed' by providing a URL where the webhook notifications should be sent.",
+        "description": "Subscribe to events (e.g., 'document.signed') by providing a URL where webhook notifications should be sent.",
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterWebhookRequest"
-              }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RegisterWebhookRequest" } } }
         },
         "responses": {
           "201": {
             "description": "Webhook successfully registered.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegisterWebhookResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RegisterWebhookResponse" } } }
           },
           "400": {
             "description": "Invalid request or missing required parameters (url, eventType).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "401": {
             "description": "Unauthorized (API key missing, invalid, or expired).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "500": {
             "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           }
         }
       }
     },
     "/getAllDocuments": {
       "get": {
+        "operationId": "getAllDocuments",
         "summary": "Retrieve all documents",
         "description": "Returns all documents owned by the user associated with the provided API key. Each document includes its metadata, a presigned public URL, and recipient information.",
-        "security": [
-          { "apiKeyAuth": [] }
-        ],
+        "security": [{ "apiKeyAuth": [] }],
         "responses": {
           "200": {
             "description": "Successfully retrieved all documents for the user.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAllDocumentsResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/GetAllDocumentsResponse" } } }
           },
           "401": {
             "description": "Unauthorized (API key missing or invalid)",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "500": {
             "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           }
         }
       }
     },
     "/getDocumentDetails": {
       "get": {
+        "operationId": "getDocumentDetails",
         "summary": "Retrieve a single document's details",
-        "description": "Fetches detailed information for a specific document by its ID. The response includes document metadata, recipient information, and a temporary URL to the final signed PDF if the document has been completed.",
-        "security": [
-          { "apiKeyAuth": [] }
-        ],
+        "description": "Fetch detailed information for a specific document by its ID. Includes document metadata, recipient information, and a temporary URL to the final signed PDF if the document has been completed.",
+        "security": [{ "apiKeyAuth": [] }],
         "parameters": [
           {
             "name": "pdf_id",
             "in": "query",
             "required": true,
             "description": "The unique identifier of the document to retrieve.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
           "200": {
             "description": "Document details retrieved successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetDocumentDetailsResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/GetDocumentDetailsResponse" } } }
           },
           "400": {
             "description": "Bad Request - Missing or invalid 'pdf_id' query parameter.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "401": {
             "description": "Unauthorized - API key is missing or invalid.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "403": {
             "description": "Forbidden - You do not have permission to access this document.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "404": {
             "description": "Not Found - The requested document does not exist.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "500": {
             "description": "Internal Server Error.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           }
         }
       }
     },
     "/deleteWebhook": {
       "post": {
+        "operationId": "deleteWebhook",
         "summary": "Delete a webhook",
         "description": "Removes a webhook registration based on the provided URL for the authenticated user.",
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteWebhookRequest"
-              }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteWebhookRequest" } } }
         },
         "responses": {
           "200": {
             "description": "Webhook successfully deleted.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeleteWebhookResponse"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteWebhookResponse" } } }
           },
           "400": {
             "description": "Invalid request or missing required parameter (url).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "401": {
             "description": "Unauthorized (API key missing, invalid, or expired).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "404": {
             "description": "Webhook not found or already deleted for the authenticated user.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           },
           "500": {
             "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
           }
         }
       }
     },
     "/createNewTemplate": {
       "post": {
-        "summary": "Delete a webhook",
-        "description": "Removes a webhook registration based on the provided URL for the authenticated user.",
+        "operationId": "createNewTemplate",
+        "summary": "Create a template (API key auth). Optionally instantiate and send to recipients.",
+        "description": "Creates a template from an uploaded PDF and template fields. If `recipients` are provided, a PDF instance is immediately created from the template and recipient notifications are sent.",
+        "security": [{ "apiKeyAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/DeleteWebhookRequest"
+                "type": "object",
+                "required": ["pdf", "templateName", "fields"],
+                "properties": {
+                  "pdf": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The template PDF file to upload."
+                  },
+                  "templateName": { "type": "string", "description": "Name for the template." },
+                  "fields": {
+                    "type": "array",
+                    "description": "Template fields grouped by recipient index. Each inner array corresponds to the fields for a recipient. Sent as JSON within multipart.",
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Field" }
+                    }
+                  },
+                  "recipients": {
+                    "type": "array",
+                    "description": "Optional. If provided, immediately creates a document instance and notifies recipients.",
+                    "items": { "$ref": "#/components/schemas/Recipient" }
+                  },
+                  "autoReleaseSignatures": {
+                    "type": "boolean",
+                    "description": "Optional. Default false if omitted."
+                  }
+                }
+              },
+              "encoding": {
+                "fields": { "contentType": "application/json" },
+                "recipients": { "contentType": "application/json" }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Webhook successfully deleted.",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteWebhookResponse"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "required": ["message", "template_id", "s3_url", "fields"],
+                      "properties": {
+                        "message": { "type": "string", "example": "Template created successfully" },
+                        "template_id": { "type": "string", "format": "uuid" },
+                        "s3_url": { "type": "string", "description": "S3 key/path for the uploaded template PDF." },
+                        "fields": {
+                          "type": "array",
+                          "items": {
+                            "type": "array",
+                            "items": { "$ref": "#/components/schemas/Field" }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": ["message", "template_id", "pdf_id", "s3_url", "fields", "recipients"],
+                      "properties": {
+                        "message": { "type": "string", "example": "Template created and PDF created successfully" },
+                        "template_id": { "type": "string", "format": "uuid" },
+                        "pdf_id": { "type": "string", "format": "uuid" },
+                        "s3_url": { "type": "string", "description": "S3 key/path for the uploaded template PDF." },
+                        "fields": {
+                          "type": "array",
+                          "description": "Flattened list of fields with recipient info applied to each field.",
+                          "items": { "$ref": "#/components/schemas/PopulatedField" }
+                        },
+                        "recipients": { "type": "array", "items": { "type": "string", "format": "email" } }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "templateOnly": {
+                    "summary": "Template created (no recipients provided)",
+                    "value": {
+                      "message": "Template created successfully",
+                      "template_id": "b4e2e25f-3a43-4e6c-9df9-3c6c1a2f13a1",
+                      "s3_url": "templates/final.pdf",
+                      "fields": [
+                        [
+                          { "id": "sig-1", "x": 144, "y": 418, "page": 1, "type": "Signature", "recipient": 1 }
+                        ]
+                      ]
+                    }
+                  },
+                  "withRecipients": {
+                    "summary": "Template created and document sent to recipients",
+                    "value": {
+                      "message": "Template created and PDF created successfully",
+                      "template_id": "b4e2e25f-3a43-4e6c-9df9-3c6c1a2f13a1",
+                      "pdf_id": "fdb3c602-ef01-43c7-9874-ff096443ff48",
+                      "s3_url": "templates/final.pdf",
+                      "fields": [
+                        {
+                          "id": "sig-1",
+                          "x": 144,
+                          "y": 418,
+                          "page": 1,
+                          "type": "Signature",
+                          "recipient": { "email": "michaeluo@gmail.com", "name": "michael_api_test" }
+                        }
+                      ],
+                      "recipients": ["michaeluo@gmail.com"]
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid request or missing required parameter (url).",
+            "description": "Bad request (missing file, invalid fields JSON, missing templateName, invalid recipients)",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                "schema": { "type": "object", "properties": { "message": { "type": "string" } } },
+                "examples": {
+                  "missingFile": { "value": { "message": "No file uploaded." } },
+                  "missingName": { "value": { "message": "Template name is required." } },
+                  "invalidFields": { "value": { "message": "Invalid fields data." } },
+                  "invalidRecipients": { "value": { "message": "Recipients must be an array." } }
                 }
               }
             }
           },
           "401": {
-            "description": "Unauthorized (API key missing, invalid, or expired).",
+            "description": "Unauthorized (missing or invalid API key)",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Webhook not found or already deleted for the authenticated user.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                "schema": { "type": "object", "properties": { "message": { "type": "string" } } },
+                "examples": {
+                  "missingApiKey": { "value": { "message": "API key is required." } },
+                  "invalidApiKey": { "value": { "message": "Invalid or expired API key." } }
                 }
               }
             }
           },
           "500": {
-            "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "description": "Internal Server Error",
+            "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" } } } } }
           }
         }
       }
     }
-
   },
   "webhooks": {
     "documentEvent": {
       "post": {
+        "operationId": "documentEventWebhook",
         "description": "A webhook that delivers information about a document event, such as when a recipient signs a PDF.",
         "requestBody": {
           "description": "Data related to the event that occurred.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/WebhookEvent"
-              }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WebhookEvent" } } }
         },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to acknowledge receipt of the event."
-          }
-        }
+        "responses": { "200": { "description": "Return a 200 status to acknowledge receipt of the event." } }
       }
     }
   },
@@ -451,9 +383,7 @@
           "recipients": {
             "type": "array",
             "description": "List of recipients for this document",
-            "items": {
-              "$ref": "#/components/schemas/DocumentRecipient"
-            }
+            "items": { "$ref": "#/components/schemas/DocumentRecipient" }
           }
         },
         "required": ["id", "recipients"]
@@ -464,13 +394,14 @@
           "id": { "type": "string", "description": "Unique document identifier" },
           "name": { "type": "string", "description": "Name or title of the document" },
           "status": { "type": "string", "description": "Current status of the document (e.g., draft, signed, etc.)" },
-          "finalUrl": { "type": ["string", "null"], "description": "A temporary, presigned URL to the final signed PDF. This URL is only available when the document status is 'signed'." },
+          "finalUrl": {
+            "type": ["string", "null"],
+            "description": "A temporary, presigned URL to the final signed PDF. Only available when the document status is 'signed'."
+          },
           "recipients": {
             "type": "array",
             "description": "List of recipients for this document",
-            "items": {
-              "$ref": "#/components/schemas/DocumentRecipient"
-            }
+            "items": { "$ref": "#/components/schemas/DocumentRecipient" }
           }
         },
         "required": ["id", "name", "status", "recipients"]
@@ -487,49 +418,33 @@
         "type": "object",
         "properties": {
           "message": { "type": "string", "description": "Status message" },
-          "documents": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/DashboardDocument" }
-          }
+          "documents": { "type": "array", "items": { "$ref": "#/components/schemas/DashboardDocument" } }
         },
         "required": ["message", "documents"]
       },
-       "GetDocumentDetailsResponse": {
+      "GetDocumentDetailsResponse": {
         "type": "object",
         "properties": {
           "message": { "type": "string", "description": "Status message" },
-          "document": {
-            "$ref": "#/components/schemas/DocumentDetails"
-          }
+          "document": { "$ref": "#/components/schemas/DocumentDetails" }
         },
         "required": ["message", "document"]
       },
       "WebhookEventPayload": {
         "type": "object",
-        "required": [ "pdf_id", "event_type" ],
+        "required": ["pdf_id", "event_type"],
         "properties": {
-          "pdf_id": {
-            "description": "The ID of the PDF document related to the event.",
-            "type": "string"
-          },
-          "event_type": {
-            "description": "Type of the event that occurred, such as 'document.signed'.",
-            "type": "string"
-          }
+          "pdf_id": { "description": "The ID of the PDF document related to the event.", "type": "string" },
+          "event_type": { "description": "Type of the event that occurred, such as 'document.signed'.", "type": "string" }
         }
       },
       "WebhookEvent": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/WebhookEventPayload"
-          },
+          { "$ref": "#/components/schemas/WebhookEventPayload" },
           {
             "type": "object",
             "properties": {
-              "id": {
-                "description": "Unique ID of this event notification.",
-                "type": "string"
-              }
+              "id": { "description": "Unique ID of this event notification.", "type": "string" }
             }
           }
         ]
@@ -538,90 +453,50 @@
         "type": "object",
         "required": ["message"],
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Optional error code."
-          },
-          "message": {
-            "type": "string",
-            "description": "A human-readable error message."
-          }
+          "error": { "type": "integer", "format": "int32", "description": "Optional error code." },
+          "message": { "type": "string", "description": "A human-readable error message." }
         }
       },
       "RegisterWebhookRequest": {
         "type": "object",
         "required": ["url", "eventType"],
         "properties": {
-          "url": {
-            "type": "string",
-            "format": "uri",
-            "description": "The URL where webhook notifications will be sent."
-          },
-          "eventType": {
-            "type": "string",
-            "description": "The type of event to subscribe to (e.g., 'document.signed')."
-          },
+          "url": { "type": "string", "format": "uri", "description": "The URL where webhook notifications will be sent." },
+          "eventType": { "type": "string", "description": "The type of event to subscribe to (e.g., 'document.signed')." },
           "secret": {
             "type": ["string", "null"],
-            "description": "An optional secret to sign webhook payloads, allowing the recipient to verify the sender's authenticity."
+            "description": "Optional secret to sign webhook payloads so recipients can verify authenticity."
           }
         }
       },
       "RegisterWebhookResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string",
-            "description": "A success message indicating the webhook was registered."
-          },
-          "webhook": {
-            "$ref": "#/components/schemas/WebhookRegistration"
-          }
+          "message": { "type": "string", "description": "Success message indicating the webhook was registered." },
+          "webhook": { "$ref": "#/components/schemas/WebhookRegistration" }
         }
       },
       "WebhookRegistration": {
         "type": "object",
         "required": ["webhook_id", "url", "eventType"],
         "properties": {
-          "webhook_id": {
-            "type": "string",
-            "description": "The unique identifier of the registered webhook."
-          },
-          "url": {
-            "type": "string",
-            "format": "uri",
-            "description": "The URL where webhook notifications will be sent."
-          },
-          "eventType": {
-            "type": "string",
-            "description": "The type of event subscribed to."
-          }
+          "webhook_id": { "type": "string", "description": "Unique identifier of the registered webhook." },
+          "url": { "type": "string", "format": "uri", "description": "The URL where webhook notifications will be sent." },
+          "eventType": { "type": "string", "description": "The type of event subscribed to." }
         }
       },
       "DeleteWebhookRequest": {
         "type": "object",
         "required": ["url"],
         "properties": {
-          "url": {
-            "type": "string",
-            "format": "uri",
-            "description": "The URL of the webhook to be deleted."
-          }
+          "url": { "type": "string", "format": "uri", "description": "The URL of the webhook to be deleted." }
         }
       },
       "DeleteWebhookResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string",
-            "description": "A success message indicating the webhook was deleted."
-          },
-          "url": {
-            "type": "string",
-            "format": "uri",
-            "description": "The URL of the webhook that was deleted."
-          }
+          "message": { "type": "string", "description": "Success message indicating the webhook was deleted." },
+          "url": { "type": "string", "format": "uri", "description": "The URL of the webhook that was deleted." }
         }
       },
       "Field": {
@@ -632,23 +507,13 @@
           "x": { "type": "number" },
           "y": { "type": "number" },
           "page": { "type": "integer", "minimum": 1 },
-          "type": {
-            "type": "string",
-            "description": "Field type (e.g., Signature, Text)"
-          },
+          "type": { "type": "string", "description": "Field type (e.g., Signature, Text)" },
           "recipient": {
             "type": "integer",
             "description": "Index of the recipient group this field belongs to."
           }
         },
-        "example": {
-          "id": "sig-1",
-          "x": 144,
-          "y": 418,
-          "page": 1,
-          "type": "Signature",
-          "recipient": 1
-        }
+        "example": { "id": "sig-1", "x": 144, "y": 418, "page": 1, "type": "Signature", "recipient": 1 }
       },
       "PopulatedField": {
         "type": "object",
@@ -657,33 +522,30 @@
           "id": { "type": "string" },
           "x": { "type": "number" },
           "y": { "type": "number" },
-          "page": { "type": "integer" },
+          "page": { "type": "integer", "minimum": 1 },
           "type": { "type": "string" },
           "recipient": {
             "type": "object",
             "properties": {
               "email": { "type": "string", "format": "email" },
               "name": { "type": "string" }
-            }
+            },
+            "required": ["email", "name"]
           }
         }
       },
       "Recipient": {
         "type": "object",
-        "required": ["name","email"],
+        "required": ["name", "email"],
         "properties": {
           "name": { "type": "string" },
           "email": { "type": "string", "format": "email" },
-          "phone": { "type": ["string","null"] }
+          "phone": { "type": ["string", "null"] }
         }
       }
     },
     "securitySchemes": {
-      "apiKeyAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "x-api-key"
-      }
+      "apiKeyAuth": { "type": "apiKey", "in": "header", "name": "x-api-key" }
     }
   }
 }
