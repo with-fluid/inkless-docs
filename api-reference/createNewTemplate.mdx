@@ -1,0 +1,137 @@
+---
+title: 'Creating a new template via API'
+description: 'A guide on how to create a new template via API'
+---
+
+### Create a Template via API Key: POST `/createNewTemplate`
+
+Use this API to create a reusable template from a PDF. Optionally include `recipients` to immediately instantiate a document and send notifications.
+
+## Endpoint and Auth
+- **Method**: `POST`
+- **Path**: `/createNewTemplate`
+- **Auth**: Header `x-api-key: YOUR_API_KEY`
+- **Content-Type**: `multipart/form-data`
+
+## Multipart form fields
+- **Required**
+  - `pdf` (file, binary): The template PDF file to upload.
+  - `templateName` (string): A human-readable name for the template.
+  - `fields` (JSON string): Array of arrays representing fields grouped by recipient index.
+    - Each inner array corresponds to a recipient’s field group.
+    - Field object shape:
+      - `id` (string): Stable ID for the field (e.g., `sig-1`).
+      - `x` (number), `y` (number): Position on the page.
+      - `page` (integer): 1-based page index.
+      - `type` (string): e.g., `Signature`, `Text`.
+      - `recipient` (integer): Group index this field belongs to.
+- **Optional**
+  - `recipients` (JSON string): If provided, the server immediately creates a document instance from the template and notifies these recipients.
+    - Array of objects `{ name: string, email: string, phone?: string }`
+  - `autoReleaseSignatures` (boolean): Defaults to `false` if omitted; auto-finalize when all signatures are collected.
+
+## Important notes
+- Do NOT manually set the `Content-Type` header for multipart; let your HTTP client set the boundary.
+- `fields` and `recipients` must be JSON-encoded strings in the form data.
+- Coordinates `(x, y)` and `page` should match your PDF’s coordinate system (page is 1-based).
+
+## Example: Node.js (based on `testCreateNewTemplateAndSendToRecipients`)
+```ts
+import fs from 'fs';
+
+async function createNewTemplate() {
+  const url = 'http://localhost:3000/createNewTemplate';
+  const apiKey = 'test_api_key_azianmike3';
+
+  const form = new FormData();
+
+  // File: final.pdf
+  const fileBuffer = fs.readFileSync('final.pdf');
+  const pdfBlob = new Blob([fileBuffer], { type: 'application/pdf' });
+  form.append('pdf', pdfBlob, 'final.pdf');
+
+  // Template name
+  form.append('templateName', 'API Key Template Test - With Recipients');
+
+  // Fields: 1 recipient group, 1 signature field
+  const fields = [[
+    { id: 'sig-1', x: 144, y: 418, page: 1, type: 'Signature', recipient: 1 }
+  ]];
+  form.append('fields', JSON.stringify(fields));
+
+  // Optional: recipients to immediately instantiate and notify
+  const recipients = [{ name: 'michael_api_test', email: 'michaeluo@gmail.com' }];
+  form.append('recipients', JSON.stringify(recipients));
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey },
+    body: form
+  });
+
+  const text = await resp.text();
+  const data = (() => { try { return JSON.parse(text); } catch { return text; } })();
+
+  console.log(resp.ok ? 'Success' : 'Error', resp.status, data);
+}
+```
+
+## Example: cURL
+```bash
+curl -X POST http://localhost:3000/createNewTemplate \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -F 'pdf=@final.pdf;type=application/pdf' \
+  -F 'templateName=API Key Template Test - With Recipients' \
+  -F 'fields=[[
+      {"id":"sig-1","x":144,"y":418,"page":1,"type":"Signature","recipient":1}
+    ]]' \
+  -F 'recipients=[{"name":"michael_api_test","email":"michaeluo@gmail.com"}]'
+```
+
+## Successful responses
+- Template only (no recipients):
+```json
+{
+  "message": "Template created successfully",
+  "template_id": "b4e2e25f-3a43-4e6c-9df9-3c6c1a2f13a1",
+  "s3_url": "templates/final.pdf",
+  "fields": [
+    [
+      { "id": "sig-1", "x": 144, "y": 418, "page": 1, "type": "Signature", "recipient": 1 }
+    ]
+  ]
+}
+```
+
+- Template created and document sent (with recipients):
+```json
+{
+  "message": "Template created and PDF created successfully",
+  "template_id": "b4e2e25f-3a43-4e6c-9df9-3c6c1a2f13a1",
+  "pdf_id": "fdb3c602-ef01-43c7-9874-ff096443ff48",
+  "s3_url": "templates/final.pdf",
+  "fields": [
+    {
+      "id": "sig-1",
+      "x": 144,
+      "y": 418,
+      "page": 1,
+      "type": "Signature",
+      "recipient": { "email": "michaeluo@gmail.com", "name": "michael_api_test" }
+    }
+  ],
+  "recipients": ["michaeluo@gmail.com"]
+}
+```
+
+## Error responses
+- 400 Bad Request:
+  - `{ "message": "No file uploaded." }`
+  - `{ "message": "Template name is required." }`
+  - `{ "message": "Invalid fields data." }`
+  - `{ "message": "Recipients must be an array." }`
+- 401 Unauthorized:
+  - `{ "message": "API key is required." }`
+  - `{ "message": "Invalid or expired API key." }`
+- 500 Internal Server Error:
+  - `{ "message": "Internal Server Error" }`
