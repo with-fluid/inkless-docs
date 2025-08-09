@@ -15,7 +15,7 @@ Use this API to create a reusable template from a PDF. Optionally include `recip
 
 ## Multipart form fields
 - **Required**
-  - `pdf` (file, binary): The template PDF file to upload.
+  - `pdf` (file, binary): The template PDF or DOCX file to upload (Note: You can upload a DOCX file, it will be converted to a PDF).
   - `templateName` (string): A human-readable name for the template.
   - `fields` (JSON string): Array of arrays representing fields grouped by recipient index.
     - Each inner array corresponds to a recipient’s field group.
@@ -35,7 +35,7 @@ Use this API to create a reusable template from a PDF. Optionally include `recip
 - `fields` and `recipients` must be JSON-encoded strings in the form data.
 - Coordinates `(x, y)` and `page` should match your PDF’s coordinate system (page is 1-based).
 
-## Example: Node.js (based on `testCreateNewTemplateAndSendToRecipients`)
+## Example: Node.js to upload PDF
 ```ts
 import fs from 'fs';
 
@@ -49,6 +49,50 @@ async function createNewTemplate() {
   const fileBuffer = fs.readFileSync('final.pdf');
   const pdfBlob = new Blob([fileBuffer], { type: 'application/pdf' });
   form.append('pdf', pdfBlob, 'final.pdf');
+
+  // Template name
+  form.append('templateName', 'Example Template Name');
+
+  // Fields: 1 recipient group, 1 signature field
+  const fields = [[
+    { id: 'sig-1', x: 144, y: 418, page: 1, type: 'Signature', recipient: 1 }
+  ]];
+  form.append('fields', JSON.stringify(fields));
+
+  // Optional: recipients to immediately instantiate and notify
+  const recipients = [{ name: 'Michael', email: 'michael@useinkless.com' }];
+  form.append('recipients', JSON.stringify(recipients));
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'x-api-key': apiKey },
+    body: form
+  });
+
+  const text = await resp.text();
+  const data = (() => { try { return JSON.parse(text); } catch { return text; } })();
+
+  console.log(resp.ok ? 'Success' : 'Error', resp.status, data);
+}
+```
+
+## Example: Node.js to upload a DOCX
+```ts
+import fs from 'fs';
+
+async function createNewTemplate() {
+  const url = 'http://api.useinkless/createNewTemplate';
+  const apiKey = 'your_api_key';
+
+  const form = new FormData();
+
+  // File: final.pdf
+  const fileBuffer = fs.readFileSync('final.pdf');
+  const docxBlob = new Blob([fileBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  });
+  // Server expects field name 'pdf' (multer.single('pdf'))
+  form.append('pdf', docxBlob, 'Important_Contract.docx');
 
   // Template name
   form.append('templateName', 'Example Template Name');
