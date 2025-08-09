@@ -35,6 +35,7 @@
               "api-reference/endpoint/getAllDocuments",
               "api-reference/endpoint/getDocumentDetails",
               "api-reference/endpoint/registerWebhook",
+              "api-reference/endpoint/createNewTemplate",
               "api-reference/endpoint/deleteWebhook"
             ]
           }
