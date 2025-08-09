@@ -36,7 +36,6 @@
               "api-reference/endpoint/getDocumentDetails",
               "api-reference/endpoint/registerWebhook",
               "api-reference/endpoint/deleteWebhook"
-              
             ]
           }
         ]

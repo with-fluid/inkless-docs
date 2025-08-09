@@ -346,7 +346,188 @@
           }
         }
       }
+    },
+    "/createNewTemplate": {
+      "post": {
+        "summary": "Create a template (API key auth). Optionally instantiate and send to recipients.",
+        "description": "Creates a template from an uploaded PDF and template fields. If `recipients` are provided, a PDF instance is immediately created from the template and recipient notifications are sent.",
+        "security": [{ "apiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["pdf", "templateName", "fields"],
+                "properties": {
+                  "pdf": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The template PDF file to upload."
+                  },
+                  "templateName": {
+                    "type": "string",
+                    "description": "Name for the template."
+                  },
+                  "fields": {
+                    "type": "array",
+                    "description": "Template fields grouped by recipient index. Each inner array corresponds to the fields for a recipient. Sent as JSON within multipart.",
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Field" }
+                    }
+                  },
+                  "recipients": {
+                    "type": "array",
+                    "description": "Optional. If provided, immediately creates a document instance and notifies recipients.",
+                    "items": { "$ref": "#/components/schemas/Recipient" }
+                  },
+                  "autoReleaseSignatures": {
+                    "type": "boolean",
+                    "description": "Optional. Default false if omitted."
+                  }
+                }
+              },
+              "encoding": {
+                "fields": { "contentType": "application/json" },
+                "recipients": { "contentType": "application/json" }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": ["message", "template_id", "s3_url", "fields"],
+                    "properties": {
+                      "message": { "type": "string", "example": "Template created successfully" },
+                      "template_id": { "type": "string", "format": "uuid" },
+                      "s3_url": { "type": "string", "description": "S3 key/path for the uploaded template PDF." },
+                      "fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Field" }
+                        }
+                      }
+                    },
+                    "examples": {
+                      "templateOnly": {
+                        "summary": "Template created (no recipients provided)",
+                        "value": {
+                          "message": "Template created successfully",
+                          "template_id": "b4e2e25f-3a43-4e6c-9df9-3c6c1a2f13a1",
+                          "s3_url": "templates/final.pdf",
+                          "fields": [
+                            [
+                              {
+                                "id": "sig-1",
+                                "x": 144,
+                                "y": 418,
+                                "page": 1,
+                                "type": "Signature",
+                                "recipient": 1
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": ["message", "template_id", "pdf_id", "s3_url", "fields", "recipients"],
+                    "properties": {
+                      "message": { "type": "string", "example": "Template created and PDF created successfully" },
+                      "template_id": { "type": "string", "format": "uuid" },
+                      "pdf_id": { "type": "string", "format": "uuid" },
+                      "s3_url": { "type": "string", "description": "S3 key/path for the uploaded template PDF." },
+                      "fields": {
+                        "type": "array",
+                        "description": "Flattened list of fields with recipient info applied to each field.",
+                        "items": { "$ref": "#/components/schemas/PopulatedField" }
+                      },
+                      "recipients": {
+                        "type": "array",
+                        "items": { "type": "string", "format": "email" }
+                      }
+                    },
+                    "examples": {
+                      "withRecipients": {
+                        "summary": "Template created and document sent to recipients",
+                        "value": {
+                          "message": "Template created and PDF created successfully",
+                          "template_id": "b4e2e25f-3a43-4e6c-9df9-3c6c1a2f13a1",
+                          "pdf_id": "fdb3c602-ef01-43c7-9874-ff096443ff48",
+                          "s3_url": "templates/final.pdf",
+                          "fields": [
+                            {
+                              "id": "sig-1",
+                              "x": 144,
+                              "y": 418,
+                              "page": 1,
+                              "type": "Signature",
+                              "recipient": {
+                                "email": "michaeluo@gmail.com",
+                                "name": "michael_api_test"
+                              }
+                            }
+                          ],
+                          "recipients": ["michaeluo@gmail.com"]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (missing file, invalid fields JSON, missing templateName, invalid recipients)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "message": { "type": "string" } }
+                },
+                "examples": {
+                  "missingFile": { "value": { "message": "No file uploaded." } },
+                  "missingName": { "value": { "message": "Template name is required." } },
+                  "invalidFields": { "value": { "message": "Invalid fields data." } },
+                  "invalidRecipients": { "value": { "message": "Recipients must be an array." } }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (missing or invalid API key)",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": { "message": { "type": "string" } } },
+                "examples": {
+                  "missingApiKey": { "value": { "message": "API key is required." } },
+                  "invalidApiKey": { "value": { "message": "Invalid or expired API key." } }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": { "message": { "type": "string" } } }
+              }
+            }
+          }
+        }
+      }
     }
+
   },
   "webhooks": {
     "documentEvent": {
@@ -553,6 +734,59 @@
             "format": "uri",
             "description": "The URL of the webhook that was deleted."
           }
+        }
+      },
+      "Field": {
+        "type": "object",
+        "required": ["id", "x", "y", "page", "type", "recipient"],
+        "properties": {
+          "id": { "type": "string" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "page": { "type": "integer", "minimum": 1 },
+          "type": {
+            "type": "string",
+            "description": "Field type (e.g., Signature, Text)"
+          },
+          "recipient": {
+            "type": "integer",
+            "description": "Index of the recipient group this field belongs to."
+          }
+        },
+        "example": {
+          "id": "sig-1",
+          "x": 144,
+          "y": 418,
+          "page": 1,
+          "type": "Signature",
+          "recipient": 1
+        }
+      },
+      "PopulatedField": {
+        "type": "object",
+        "required": ["id", "x", "y", "page", "type", "recipient"],
+        "properties": {
+          "id": { "type": "string" },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "page": { "type": "integer" },
+          "type": { "type": "string" },
+          "recipient": {
+            "type": "object",
+            "properties": {
+              "email": { "type": "string", "format": "email" },
+              "name": { "type": "string" }
+            }
+          }
+        }
+      },
+      "Recipient": {
+        "type": "object",
+        "required": ["name", "email"],
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string", "nullable": true }
         }
       }
     },
