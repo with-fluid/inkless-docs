@@ -40,8 +40,8 @@ Use this API to create a reusable template from a PDF. Optionally include `recip
 import fs from 'fs';
 
 async function createNewTemplate() {
-  const url = 'http://localhost:3000/createNewTemplate';
-  const apiKey = 'test_api_key_azianmike3';
+  const url = 'http://api.useinkless/createNewTemplate';
+  const apiKey = 'your_api_key';
 
   const form = new FormData();
 
@@ -51,7 +51,7 @@ async function createNewTemplate() {
   form.append('pdf', pdfBlob, 'final.pdf');
 
   // Template name
-  form.append('templateName', 'API Key Template Test - With Recipients');
+  form.append('templateName', 'Example Template Name');
 
   // Fields: 1 recipient group, 1 signature field
   const fields = [[
@@ -60,7 +60,7 @@ async function createNewTemplate() {
   form.append('fields', JSON.stringify(fields));
 
   // Optional: recipients to immediately instantiate and notify
-  const recipients = [{ name: 'michael_api_test', email: 'michaeluo@gmail.com' }];
+  const recipients = [{ name: 'Michael', email: 'michael@useinkless.com' }];
   form.append('recipients', JSON.stringify(recipients));
 
   const resp = await fetch(url, {
@@ -78,14 +78,14 @@ async function createNewTemplate() {
 
 ## Example: cURL
 ```bash
-curl -X POST http://localhost:3000/createNewTemplate \
+curl -X POST http://api.useinkless.com/createNewTemplate \
   -H 'x-api-key: YOUR_API_KEY' \
   -F 'pdf=@final.pdf;type=application/pdf' \
-  -F 'templateName=API Key Template Test - With Recipients' \
+  -F 'templateName=Template Name' \
   -F 'fields=[[
       {"id":"sig-1","x":144,"y":418,"page":1,"type":"Signature","recipient":1}
     ]]' \
-  -F 'recipients=[{"name":"michael_api_test","email":"michaeluo@gmail.com"}]'
+  -F 'recipients=[{"name":"Michael","email":"michael@useinkless.com"}]'
 ```
 
 ## Successful responses
@@ -117,10 +117,10 @@ curl -X POST http://localhost:3000/createNewTemplate \
       "y": 418,
       "page": 1,
       "type": "Signature",
-      "recipient": { "email": "michaeluo@gmail.com", "name": "michael_api_test" }
+      "recipient": { "email": "michael@useinkless.com", "name": "Michael" }
     }
   ],
-  "recipients": ["michaeluo@gmail.com"]
+  "recipients": ["michael@useinkless.com"]
 }
 ```
 
