@@ -87,11 +87,11 @@ async function createNewTemplate() {
   const form = new FormData();
 
   // File: final.pdf
-  const fileBuffer = fs.readFileSync('final.pdf');
+  const fileBuffer = fs.readFileSync('Important_Contract.docx');
   const docxBlob = new Blob([fileBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   });
-  // Server expects field name 'pdf' (multer.single('pdf'))
+  // Server expects field name 'document' (multer.single('document'))
   form.append('document', docxBlob, 'Important_Contract.docx');
 
   // Template name
