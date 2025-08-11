@@ -213,7 +213,7 @@
                 "type": "object",
                 "required": ["pdf", "templateName", "fields"],
                 "properties": {
-                  "pdf": {
+                  "document": {
                     "type": "string",
                     "format": "binary",
                     "description": "The template PDF file to upload. Note that you can also upload a DOCX file here but will be converted to a PDF."
