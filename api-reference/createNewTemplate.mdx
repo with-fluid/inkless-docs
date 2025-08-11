@@ -15,7 +15,7 @@ Use this API to create a reusable template from a PDF. Optionally include `recip
 
 ## Multipart form fields
 - **Required**
-  - `pdf` (file, binary): The template PDF or DOCX file to upload (Note: You can upload a DOCX file, it will be converted to a PDF).
+  - `document` (file, binary): The template PDF or DOCX file to upload (Note: You can upload a DOCX file, it will be converted to a PDF).
   - `templateName` (string): A human-readable name for the template.
   - `fields` (JSON string): Array of arrays representing fields grouped by recipient index.
     - Each inner array corresponds to a recipient’s field group.
@@ -48,7 +48,7 @@ async function createNewTemplate() {
   // File: final.pdf
   const fileBuffer = fs.readFileSync('final.pdf');
   const pdfBlob = new Blob([fileBuffer], { type: 'application/pdf' });
-  form.append('pdf', pdfBlob, 'final.pdf');
+  form.append('document', pdfBlob, 'final.pdf');
 
   // Template name
   form.append('templateName', 'Example Template Name');
@@ -92,7 +92,7 @@ async function createNewTemplate() {
       type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   });
   // Server expects field name 'pdf' (multer.single('pdf'))
-  form.append('pdf', docxBlob, 'Important_Contract.docx');
+  form.append('document', docxBlob, 'Important_Contract.docx');
 
   // Template name
   form.append('templateName', 'Example Template Name');
@@ -124,7 +124,7 @@ async function createNewTemplate() {
 ```bash
 curl -X POST http://api.useinkless.com/createNewTemplate \
   -H 'x-api-key: YOUR_API_KEY' \
-  -F 'pdf=@final.pdf;type=application/pdf' \
+  -F 'document=@final.pdf;type=application/pdf' \
   -F 'templateName=Template Name' \
   -F 'fields=[[
       {"id":"sig-1","x":144,"y":418,"page":1,"type":"Signature","recipient":1}
