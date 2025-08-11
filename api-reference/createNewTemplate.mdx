@@ -86,7 +86,7 @@ async function createNewTemplate() {
 
   const form = new FormData();
 
-  // File: final.pdf
+  // File: Important_Contract.docx
   const fileBuffer = fs.readFileSync('Important_Contract.docx');
   const docxBlob = new Blob([fileBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
