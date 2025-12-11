@@ -23,6 +23,7 @@
                 "required": ["templateId", "recipients"],
                 "properties": {
                   "templateId": { "type": "string", "description": "ID of the template to use" },
+                  "emailSubject": { "type": "string", "description": "Optional custom subject for the email sent to recipients." },
                   "recipients": {
                     "type": "array",
                     "description": "List of recipient objects",
@@ -219,6 +220,7 @@
                     "description": "The template PDF file to upload. Note that you can also upload a DOCX file here but will be converted to a PDF."
                   },
                   "templateName": { "type": "string", "description": "Name for the template." },
+                  "emailSubject": { "type": "string", "description": "Optional custom subject for the email sent to recipients." },
                   "fields": {
                     "type": "array",
                     "description": "Template fields grouped by recipient index. Each inner array corresponds to the fields for a recipient. Sent as JSON within multipart.",
